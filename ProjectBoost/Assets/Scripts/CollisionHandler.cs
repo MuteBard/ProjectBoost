@@ -1,11 +1,11 @@
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class CollisionHandler : MonoBehaviour
 {
     void OnCollisionEnter(Collision other){
         switch(other.gameObject.tag){
             case "Finish":
-                Debug.Log("Finish");
+                NextLevel();
                 break;
             case "Friendly":
                 Debug.Log("Friendly");
@@ -14,8 +14,22 @@ public class CollisionHandler : MonoBehaviour
                 Debug.Log("Fuel");
                 break;
             default:
-                Debug.Log("Boom");
+                ReloadLevel();
                 break;
+        }
+    }
+    //https://docs.unity3d.com/ScriptReference/SceneManagement.SceneManager.html
+    void ReloadLevel(){
+        int currentIndex = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(currentIndex);
+    }
+
+    void NextLevel(){
+        int nextIndex = SceneManager.GetActiveScene().buildIndex + 1;
+        if( nextIndex <= SceneManager.sceneCount){
+            SceneManager.LoadScene(nextIndex);
+        }else{
+            SceneManager.LoadScene(0);
         }
     }
 }
