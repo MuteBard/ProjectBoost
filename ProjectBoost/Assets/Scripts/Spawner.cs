@@ -6,6 +6,7 @@ public class Spawner : MonoBehaviour
 {
     [SerializeField] GameObject finissimo;
     [SerializeField] GameObject chased;
+    [SerializeField] int spawnRate = 1;
 
     void Update()
     {
@@ -20,9 +21,9 @@ public class Spawner : MonoBehaviour
     }
 
     void SpawnAtRandomTime(){
-        int number = Random.Range(0, 500);
+        int number = Random.Range(0, 1000 / spawnRate);
         int count = GameObject.FindGameObjectsWithTag("Finissimo").Length;
-        if(count <= 2 && number == 250){
+        if(count <= 5 && number == 1){
             SpawnRandomPosition();
         }
     }

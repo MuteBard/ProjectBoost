@@ -7,14 +7,21 @@ public class PlayerDefenses : MonoBehaviour
     [SerializeField] float growthRate = 2f;
     [SerializeField] float iRange = 100f;
     [SerializeField] float iIntensity = 25f;
-
     [SerializeField] float LightDuration = 5f;
-    Light light;
+    AudioManager audioManager;
+    MeshRenderer meshRenderer;
+    Rigidbody rigidBody;
+    Movement movement;
+    Light lightLevel;
     
-
+    
     void Start(){
+        meshRenderer = gameObject.GetComponent<MeshRenderer>();
+        rigidBody = gameObject.GetComponent<Rigidbody>();
+        movement = gameObject.GetComponent<Movement>();
+        audioManager = GetComponent<AudioManager>();
         var child = transform.GetChild(0).gameObject;
-        light = child.GetComponent<Light>();
+        lightLevel = child.GetComponent<Light>();
         GetComponent<MeshRenderer>().material.color = applyHexColor("#FF0000");
     }
 
@@ -26,12 +33,12 @@ public class PlayerDefenses : MonoBehaviour
 
     public bool BurnBright(float amount){
         int count = 0;
-         if(light.range < iRange){
-            light.range += amount;
+         if(lightLevel.range < iRange){
+            lightLevel.range += amount;
             count++;
         }
-        if(light.intensity < iIntensity){
-            light.intensity += amount / 4;
+        if(lightLevel.intensity < iIntensity){
+            lightLevel.intensity += amount / 4;
             count++;
         }
         if(count >= 2){
@@ -43,12 +50,12 @@ public class PlayerDefenses : MonoBehaviour
 
     public bool DimDown(float amount){
         int count = 0;
-        if(light.range > 0){
-            light.range -= amount;
+        if(lightLevel.range > 5){
+            lightLevel.range -= amount;
             count++;
         }
-        if(light.intensity > 0){
-            light.intensity -= amount / 4;
+        if(lightLevel.intensity > 0){
+            lightLevel.intensity -= amount / 4;
             count++;
         }
         if(count >= 2){
@@ -63,7 +70,6 @@ public class PlayerDefenses : MonoBehaviour
         var factor = 100000;
         while(gettingBrighter){
             var growthTime = growthRate * factor * Time.deltaTime;
-            Debug.Log(growthTime);
             gettingBrighter = BurnBright(growthTime);
             yield return new WaitForSeconds(.1f);
         }
@@ -71,14 +77,13 @@ public class PlayerDefenses : MonoBehaviour
         var gettingDimmer = true;
         while(gettingDimmer){
             var growthTime = growthRate * factor * Time.deltaTime;
-            Debug.Log(growthTime);
-            gettingDimmer = DimDown(growthTime);
+            gettingDimmer = DimDown(growthTime * 5);
             yield return new WaitForSeconds(.1f);
         }
     }
 
     public float GetLightRange(){
-        return light.range;
+        return lightLevel.range;
     }
 
     private Color applyHexColor(string hexcode){
@@ -92,5 +97,40 @@ public class PlayerDefenses : MonoBehaviour
         float number2 = (float) System.Convert.ToInt32(color2, 16);
         float number3 = (float) System.Convert.ToInt32(color3, 16);
         return new Color(number1, number2, number3, 0);
+    }
+
+    private void Die(){
+        audioManager.Play("death");
+        audioManager.SetVolume(1);
+        StartCoroutine(Defend());
+        meshRenderer.enabled = false;
+        movement.enabled = false;
+        rigidBody.constraints = RigidbodyConstraints.FreezeAll;  
+    }
+
+    private void Success(){
+        audioManager.Play("victory");
+        audioManager.SetVolume(1);
+        meshRenderer.enabled = false;
+        movement.enabled = false;
+        rigidBody.constraints = RigidbodyConstraints.FreezeAll;
+    }
+
+
+    void OnCollisionEnter(Collision other){
+        switch(other.gameObject.tag){
+            case "Finish":
+                Success();
+                break;
+            case "Friendly":
+                Debug.Log("Friendly");
+                break;
+            case "Fuel":
+                Debug.Log("Fuel");
+                break;
+            default:
+                Die();
+                break;
+        }
     }
 }

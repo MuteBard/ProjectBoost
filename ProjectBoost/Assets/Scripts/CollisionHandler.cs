@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 public class CollisionHandler : MonoBehaviour
@@ -14,13 +16,14 @@ public class CollisionHandler : MonoBehaviour
                 Debug.Log("Fuel");
                 break;
             default:
-                ReloadLevel();
+                StartCoroutine(ReloadLevel());
                 break;
         }
     }
     //https://docs.unity3d.com/ScriptReference/SceneManagement.SceneManager.html
-    void ReloadLevel(){
+    private IEnumerator ReloadLevel(){
         int currentIndex = SceneManager.GetActiveScene().buildIndex;
+        yield return new WaitForSeconds(1f);
         SceneManager.LoadScene(currentIndex);
     }
 

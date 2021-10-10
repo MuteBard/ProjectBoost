@@ -10,12 +10,8 @@ public class Travel : MonoBehaviour
     [SerializeField] float moveSpeed = 50f;
     [SerializeField] GameObject path;
     int currentVector = 0;
-
-    
     List<Vector3> vectors;
-    // Start is called before the first frame update
-    void Start()
-    {
+    void Start(){
         vectors = GetAllWayPointVectors();
     }
 

@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class Movement : MonoBehaviour
 {
-    Rigidbody rb;
-    AudioSource au;
+    Rigidbody rigidBody;
+    [SerializeField] AudioClip audioClip;
+    AudioManager audioManager;
     [SerializeField] float mainThrust = 10f;
     [SerializeField] float rotationalThrust = 2f;
     
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        au = GetComponent<AudioSource>();
+        rigidBody = GetComponent<Rigidbody>();
+        audioManager = GetComponent<AudioManager>();
     }
 
     
@@ -26,9 +27,9 @@ public class Movement : MonoBehaviour
         var keyPressed = Input.GetKey(KeyCode.Space);
         if(keyPressed){
             Vector3 rocketPosition = new Vector3(0, 1, 0);
-            rb.freezeRotation = true;
-            rb.AddRelativeForce(rocketPosition * mainThrust * Time.deltaTime);
-            rb.freezeRotation = false;
+            rigidBody.freezeRotation = true;
+            rigidBody.AddRelativeForce(rocketPosition * mainThrust * Time.deltaTime);
+            rigidBody.freezeRotation = false;
         }
         
         ApplyThrustNoise(keyPressed);
@@ -44,45 +45,25 @@ public class Movement : MonoBehaviour
         }
     }
 
-    private IEnumerator volumeManagement(bool turnOn){
-        float direction;
-        float volChangeDelay = .05f;
-        float volChangeInterval = .05f;
-        if(turnOn){
-            direction = 1f;
-            au.Play();
-            while(au.volume < 1){
-                float volChange = au.volume + direction * volChangeInterval;
-                yield return new WaitForSeconds(volChangeDelay);
-                au.volume = volChange; 
-            }
-        }else{
-            direction = -1f;
-            while(au.volume > 0){
-                float volChange = au.volume + direction * volChangeInterval;
-                yield return new WaitForSeconds(volChangeDelay);
-                au.volume = volChange; 
-            }
-            au.Stop();
-        }
-    }
-
 
 // https://docs.unity3d.com/ScriptReference/AudioSource.html
     private void ApplyThrustNoise(bool keyPressed){
+        bool turnOn = false;
         if(keyPressed){
-            if(!au.isPlaying){
-                StartCoroutine(volumeManagement(true));
+            if(audioManager.IsNotPlaying()){
+                audioManager.SetVolume(1);
+                audioManager.Play("thrust");
             }
         }else{
-            StartCoroutine(volumeManagement(false));
+            audioManager.Stop();
         }
+        
     }
 
     private void ApplyRotation(float direction){
         Vector3 rocketRotation = new Vector3(0, 0, 1) * direction;
-        rb.freezeRotation = true;
+        rigidBody.freezeRotation = true;
         transform.Rotate(rocketRotation * rotationalThrust * Time.deltaTime);
-        rb.freezeRotation = false;
+        rigidBody.freezeRotation = false;
     }
 }
