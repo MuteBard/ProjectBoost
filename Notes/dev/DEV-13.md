@@ -76,6 +76,6 @@ Was able to refactor out some audio fuctionality in Movement.cs and PlayerDefens
 Learned how to use the C# version of reduce which is Aggregate
 
 ### C# compared with Js
-Aggregate <===> Reduce
-Select <===> Map
-Where <===> Filter
+    Aggregate <===> Reduce
+    Select <===> Map
+    Where <===> Filter
