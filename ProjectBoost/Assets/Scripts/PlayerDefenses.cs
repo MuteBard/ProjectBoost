@@ -10,6 +10,7 @@ public class PlayerDefenses : MonoBehaviour
     [SerializeField] float LightDuration = 5f;
     AudioManager audioManager;
     RigidBodyManager rigidBodyManager;
+    ParticleManager particleManager;
     Rigidbody rigidBody;
     Movement movement;
     Light lightLevel;
@@ -19,6 +20,7 @@ public class PlayerDefenses : MonoBehaviour
         rigidBody = gameObject.GetComponent<Rigidbody>();
         movement = gameObject.GetComponent<Movement>();
         audioManager = GetComponent<AudioManager>();
+        particleManager = GetComponent<ParticleManager>();
         lightLevel = transform.GetChild(0).gameObject.GetComponent<Light>();
     }
 
@@ -98,6 +100,7 @@ public class PlayerDefenses : MonoBehaviour
     }
 
     private void Die(){
+        particleManager.Emit("death");
         audioManager.Play("death");
         audioManager.SetVolume(1);
         audioManager.startTransition();
@@ -107,6 +110,7 @@ public class PlayerDefenses : MonoBehaviour
     }
 
     private IEnumerator Success(){
+        particleManager.Emit("victory");
         audioManager.Play("victory");
         audioManager.SetVolume(1);
         audioManager.startTransition();

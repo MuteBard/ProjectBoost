@@ -37,7 +37,6 @@ public class RigidBodyManager : MonoBehaviour
     }
 
     public void ForwardAlongY(bool moveForward, float speed){
-        Debug.Log("HIII");
         Vector3 position = moveForward ? new Vector3(0, 1, 0) : new Vector3(0, -1, 0);
         ForwardAlong(position * speed * speedMuliplier *  Time.deltaTime);
     }
@@ -62,85 +61,6 @@ public class RigidBodyManager : MonoBehaviour
             rigidBody.freezeRotation = false;
         }
     }
-
-    public void MoveClockWiseWhen(string axis, float speed, bool condition){
-        if(condition){
-            switch(axis.ToLower()){
-                case "x":
-                    ClockWiseAlongX(true, speed);
-                    break;
-                case "y":
-                    ClockWiseAlongY(true, speed);
-                    break;
-                case "z":
-                    ClockWiseAlongZ(true, speed);
-                    Debug.Log("Right");
-                    break;
-                default:
-                    Debug.Log("INVALID AXIS PROVIDED");
-                    break;
-            }
-        }
-    }
-
-    public void MoveCounterClockWiseWhen(string axis, float speed, bool condition){
-        if(condition){
-            switch(axis.ToLower()){
-                case "x":
-                    ClockWiseAlongX(false, speed);
-                    break;
-                case "y":
-                    ClockWiseAlongY(false, speed);
-                    break;
-                case "z":
-                    ClockWiseAlongZ(false, speed);
-                     Debug.Log("Left");
-                    break;
-                default:
-                    Debug.Log("INVALID AXIS PROVIDED");
-                    break;
-            }
-        }
-    }
-
-    public void MoveForwardWhen(string axis, float speed, bool condition){
-        if(condition){
-            switch(axis.ToLower()){
-                case "x":
-                    ForwardAlongX(true, speed);
-                    break;
-                case "y":
-                    ForwardAlongY(true, speed);
-                    break;
-                case "z":
-                    ForwardAlongZ(true, speed);
-                    break;
-                default:
-                    Debug.Log("INVALID AXIS PROVIDED");
-                    break;
-            }
-        }
-    }
-
-    public void MoveBackwardWhen(string axis, float speed, bool condition){
-        if(condition){
-            switch(axis.ToLower()){
-                case "x":
-                    ForwardAlongX(false, speed);
-                    break;
-                case "y":
-                    ForwardAlongY(false, speed);
-                    break;
-                case "z":
-                    ForwardAlongZ(false, speed);
-                    break;
-                default:
-                    Debug.Log("INVALID AXIS PROVIDED");
-                    break;
-            }
-        }
-    }
-
     public void TurnAroundX(float degrees, float speed){
         Vector3 to = new Vector3(Math.Abs(degrees), 0, 0);
         transform.eulerAngles = Vector3.Lerp(transform.rotation.eulerAngles, to, Time.deltaTime);

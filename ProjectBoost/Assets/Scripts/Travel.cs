@@ -35,7 +35,6 @@ public class Travel : MonoBehaviour
     }
 
     private List<Vector3> GetAllWayPointVectors(){
-        List<Vector3> vectors = new List<Vector3>();
         var wayPoints = path.GetComponentsInChildren<WayPoint>();
         return wayPoints.Select(wayPoint => wayPoint.GetPosition()).ToList();
     }

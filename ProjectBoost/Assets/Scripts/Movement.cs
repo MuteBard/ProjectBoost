@@ -6,6 +6,7 @@ public class Movement : MonoBehaviour
 {
     AudioManager audioManager;
     RigidBodyManager rigidBodyManager;
+    ParticleManager particleManager;
     [SerializeField] float speed = 10f;
     [SerializeField] float rotationalSpeed = 20f;
     
@@ -13,6 +14,7 @@ public class Movement : MonoBehaviour
     {
         rigidBodyManager = GetComponent<RigidBodyManager>();
         audioManager = GetComponent<AudioManager>();
+        particleManager = GetComponent<ParticleManager>();
     }
 
     void Update()
@@ -22,12 +24,28 @@ public class Movement : MonoBehaviour
     }
 
     private void Thrust(){
-        rigidBodyManager.MoveForwardWhen("y", speed, Input.GetKey(KeyCode.Space));
-        audioManager.PlayWhen("thrust", Input.GetKey(KeyCode.Space));
+        string mainjet = "mainjet";
+        if(Input.GetKey(KeyCode.Space)){
+            rigidBodyManager.ForwardAlongY(true, speed);
+            audioManager.PlayWhen("thrust", Input.GetKey(KeyCode.Space));
+            particleManager.Emit(mainjet);
+        }else{
+            particleManager.StopEmit(mainjet);
+        }  
     }
 
     private void Rotation(){
-        rigidBodyManager.MoveClockWiseWhen("z", rotationalSpeed, Input.GetKey(KeyCode.RightArrow));
-        rigidBodyManager.MoveCounterClockWiseWhen("z", rotationalSpeed, Input.GetKey(KeyCode.LeftArrow));
+        string leftjet = "leftjet";
+        string rightjet = "rightjet";
+        if(Input.GetKey(KeyCode.RightArrow)){
+            rigidBodyManager.ClockWiseAlongZ(true, rotationalSpeed);
+            particleManager.Emit(leftjet);
+        }else if(Input.GetKey(KeyCode.LeftArrow)){
+            rigidBodyManager.ClockWiseAlongZ(false, rotationalSpeed);
+            particleManager.Emit(rightjet);
+        }else{
+            particleManager.StopEmit(rightjet);
+            particleManager.StopEmit(leftjet);
+        }
     }   
 }

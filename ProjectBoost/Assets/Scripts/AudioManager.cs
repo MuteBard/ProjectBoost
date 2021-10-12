@@ -9,7 +9,7 @@ public class AudioManager : MonoBehaviour
     AudioSource audioSource;
     [SerializeField] List<string> audioClipNames;
     [SerializeField] List<AudioClip> audioClipFiles;
-    [SerializeField] string currentClipAlias;
+    [SerializeField] string currentClip;
     Dictionary<string, AudioClip> dictionary;
     bool isTransitioning = false;
 
@@ -18,11 +18,15 @@ public class AudioManager : MonoBehaviour
         dictionary = Zip();
     }
 
-    public void Play(string audioClipName, float duration = 1){
+    public void Play(string audioClipName, float duration = 1f){
         if(!isTransitioning){
-            AudioClip audioClipFile = dictionary[audioClipName];
-            currentClipAlias = audioClipName;
-            audioSource.PlayOneShot(audioClipFile, duration);
+            if(dictionary.ContainsKey(audioClipName)){
+                AudioClip audioClipFile = dictionary[audioClipName];
+                currentClip = audioClipName;
+                audioSource.PlayOneShot(audioClipFile, duration);
+            }else{
+                Debug.Log($"audioClipName: {audioClipName} does not exist in the dictionary");
+            }
         }
     }
 
@@ -30,8 +34,8 @@ public class AudioManager : MonoBehaviour
         return audioSource.isPlaying == true;
     }
 
-    public string CurrentClipAlias(){
-        return currentClipAlias;
+    public string CurrentClip(){
+        return currentClip;
     }
 
     public bool IsNotPlaying(){
@@ -72,11 +76,18 @@ public class AudioManager : MonoBehaviour
     }
 
     private Dictionary<string, AudioClip> Zip(){
-        var zipped = audioClipNames.Aggregate(new Dictionary<string, AudioClip>(), (dictionary, name) => {
-            int index = dictionary.Count;
-            dictionary.Add(name.ToLower(), audioClipFiles[index]);
-            return dictionary;
-        });
-        return zipped;
+        if(audioClipNames.Count ==  audioClipFiles.Count){
+            var zipped = audioClipNames.Aggregate(new Dictionary<string, AudioClip>(), (dictionary, name) => {
+                int index = dictionary.Count;
+                dictionary.Add(name.ToLower(), audioClipFiles[index]);
+                return dictionary;
+            });
+            return zipped;
+
+        }
+        else{
+            Debug.Log("audioClipNames Count and audioClipFiles Counts are not the same.");
+            return null;
+        }
     }
 }
