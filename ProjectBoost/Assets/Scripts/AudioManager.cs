@@ -11,16 +11,19 @@ public class AudioManager : MonoBehaviour
     [SerializeField] List<AudioClip> audioClipFiles;
     [SerializeField] string currentClipAlias;
     Dictionary<string, AudioClip> dictionary;
+    bool isTransitioning = false;
 
-    void Awake(){
+    void Start(){
         audioSource = GetComponent<AudioSource>();
         dictionary = Zip();
     }
 
     public void Play(string audioClipName, float duration = 1){
-        AudioClip audioClipFile = dictionary[audioClipName];
-        currentClipAlias = audioClipName;
-        audioSource.PlayOneShot(audioClipFile, duration);
+        if(!isTransitioning){
+            AudioClip audioClipFile = dictionary[audioClipName];
+            currentClipAlias = audioClipName;
+            audioSource.PlayOneShot(audioClipFile, duration);
+        }
     }
 
     public bool IsPlaying(){
@@ -44,19 +47,28 @@ public class AudioManager : MonoBehaviour
     }
 
     public float GetVolume(){
-        Debug.Log(audioSource.volume);
         return audioSource.volume;
     }
 
     public void PlayWhen(string clipName, bool condition){
-        if(condition){
-            if(IsNotPlaying()){
-                SetVolume(1);
-                Play(clipName.ToLower());
+        if(!isTransitioning){
+            if(condition){
+                if(IsNotPlaying()){
+                    SetVolume(1);
+                    Play(clipName.ToLower());
+                }
+            }else{
+                Stop();
             }
-        }else{
-            Stop();
         }
+    }
+
+    public void startTransition(){
+        isTransitioning = true;
+    }
+
+    public void stopTransition(){
+        isTransitioning = false;
     }
 
     private Dictionary<string, AudioClip> Zip(){

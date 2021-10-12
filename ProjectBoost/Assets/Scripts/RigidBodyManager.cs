@@ -8,6 +8,8 @@ public class RigidBodyManager : MonoBehaviour
 {
     Rigidbody rigidBody;
     [SerializeField] float speedMuliplier = 5000f;
+
+    bool isTransitioning = false;
     void Awake()
     {
         rigidBody = GetComponent<Rigidbody>();
@@ -46,15 +48,19 @@ public class RigidBodyManager : MonoBehaviour
     }
 
     private void ClockWise(Vector3 rotation){
-        rigidBody.freezeRotation = true;
-        transform.Rotate(rotation);
-        rigidBody.freezeRotation = false;
+        if(!isTransitioning){
+            rigidBody.freezeRotation = true;
+            transform.Rotate(rotation);
+            rigidBody.freezeRotation = false;
+        }
     }
 
     private void ForwardAlong(Vector3 position){
-        rigidBody.freezeRotation = true;
-        rigidBody.AddRelativeForce(position);
-        rigidBody.freezeRotation = false;
+        if(!isTransitioning){
+            rigidBody.freezeRotation = true;
+            rigidBody.AddRelativeForce(position);
+            rigidBody.freezeRotation = false;
+        }
     }
 
     public void MoveClockWiseWhen(string axis, float speed, bool condition){
@@ -134,17 +140,6 @@ public class RigidBodyManager : MonoBehaviour
             }
         }
     }
-    
-    // public void Chase(float speed, GameObject chased){
-    //     float MovementThisFrame = speed * speedMuliplier * Time.deltaTime;
-    //     var lastPosition = chased.transform.position;
-    //     Vector3.MoveTowards(transform.position, chased.transform.position, MovementThisFrame);
-    // }
-    // public void Flee(float speed){
-    //     float MovementThisFrame = speed * speedMuliplier * Time.deltaTime;
-    //     var lastPosition = chased.transform.position;
-    //     rigidBody.AddRelativeForce(position);
-    // }
 
     public void TurnAroundX(float degrees, float speed){
         Vector3 to = new Vector3(Math.Abs(degrees), 0, 0);
@@ -159,5 +154,12 @@ public class RigidBodyManager : MonoBehaviour
     public void TurnAroundZ(float degrees, float speed){
         Vector3 to = new Vector3(0, 0, Math.Abs(degrees));
         transform.eulerAngles = Vector3.Lerp(transform.rotation.eulerAngles, to, Time.deltaTime);
+    }
+    public void startTransition(){
+        isTransitioning = true;
+    }
+
+    public void stopTransition(){
+        isTransitioning = false;
     }
 }

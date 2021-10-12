@@ -11,7 +11,6 @@ public class ColorManager : MonoBehaviour
         if(!DefautHexColor.Equals("")){
            SetDefaultColor();
         }
-        //  SetHexColors(DefautHexColor);
     }
 
     private void SetHexColors(string color){

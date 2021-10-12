@@ -7,7 +7,7 @@ public class CollisionHandler : MonoBehaviour
     void OnCollisionEnter(Collision other){
         switch(other.gameObject.tag){
             case "Finish":
-                NextLevel();
+                StartCoroutine(NextLevel());
                 break;
             case "Friendly":
                 break;
@@ -26,11 +26,13 @@ public class CollisionHandler : MonoBehaviour
         SceneManager.LoadScene(currentIndex);
     }
 
-    void NextLevel(){
+    private IEnumerator NextLevel(){
         int nextIndex = SceneManager.GetActiveScene().buildIndex;
         if( nextIndex <= SceneManager.sceneCount){
+            yield return new WaitForSeconds(1f);
             SceneManager.LoadScene(nextIndex + 1);
         }else{
+            yield return new WaitForSeconds(1f);
             SceneManager.LoadScene(0);
         }
     }

@@ -5,24 +5,21 @@ using UnityEngine;
 public class PlayerDefenses : MonoBehaviour
 {
     [SerializeField] float growthRate = 2f;
-    [SerializeField] float iRange = 100f;
-    [SerializeField] float iIntensity = 25f;
+    [SerializeField] float maxRange = 200f;
+    [SerializeField] float maxIntensity = 20f;
     [SerializeField] float LightDuration = 5f;
     AudioManager audioManager;
-    MeshRenderer meshRenderer;
+    RigidBodyManager rigidBodyManager;
     Rigidbody rigidBody;
     Movement movement;
     Light lightLevel;
     
-    
     void Start(){
-        meshRenderer = gameObject.GetComponent<MeshRenderer>();
+        rigidBodyManager = GetComponent<RigidBodyManager>();
         rigidBody = gameObject.GetComponent<Rigidbody>();
         movement = gameObject.GetComponent<Movement>();
         audioManager = GetComponent<AudioManager>();
-        var child = transform.GetChild(0).gameObject;
-        lightLevel = child.GetComponent<Light>();
-        GetComponent<MeshRenderer>().material.color = applyHexColor("#FF0000");
+        lightLevel = transform.GetChild(0).gameObject.GetComponent<Light>();
     }
 
     void Update(){
@@ -33,11 +30,12 @@ public class PlayerDefenses : MonoBehaviour
 
     public bool BurnBright(float amount){
         int count = 0;
-         if(lightLevel.range < iRange){
+        Debug.Log(lightLevel.range);
+         if(lightLevel.range < maxRange){
             lightLevel.range += amount;
             count++;
         }
-        if(lightLevel.intensity < iIntensity){
+        if(lightLevel.intensity < maxIntensity){
             lightLevel.intensity += amount / 4;
             count++;
         }
@@ -50,11 +48,11 @@ public class PlayerDefenses : MonoBehaviour
 
     public bool DimDown(float amount){
         int count = 0;
-        if(lightLevel.range > 5){
+        if(lightLevel.range > 10){
             lightLevel.range -= amount;
             count++;
         }
-        if(lightLevel.intensity > 0){
+        if(lightLevel.intensity > 5){
             lightLevel.intensity -= amount / 4;
             count++;
         }
@@ -67,7 +65,7 @@ public class PlayerDefenses : MonoBehaviour
 
     private IEnumerator Defend(){
         var gettingBrighter = true;
-        var factor = 100000;
+        var factor = 50;
         while(gettingBrighter){
             var growthTime = growthRate * factor * Time.deltaTime;
             gettingBrighter = BurnBright(growthTime);
@@ -102,25 +100,26 @@ public class PlayerDefenses : MonoBehaviour
     private void Die(){
         audioManager.Play("death");
         audioManager.SetVolume(1);
-        StartCoroutine(Defend());
-        meshRenderer.enabled = false;
+        audioManager.startTransition();
+        rigidBodyManager.startTransition();
         movement.enabled = false;
         rigidBody.constraints = RigidbodyConstraints.FreezeAll;  
     }
 
-    private void Success(){
+    private IEnumerator Success(){
         audioManager.Play("victory");
         audioManager.SetVolume(1);
-        meshRenderer.enabled = false;
+        audioManager.startTransition();
+        rigidBodyManager.startTransition();
         movement.enabled = false;
         rigidBody.constraints = RigidbodyConstraints.FreezeAll;
+        yield return new WaitForSeconds(1f);
     }
-
 
     void OnCollisionEnter(Collision other){
         switch(other.gameObject.tag){
             case "Finish":
-                Success();
+                StartCoroutine(Success());
                 break;
             case "Friendly":
                 break;
