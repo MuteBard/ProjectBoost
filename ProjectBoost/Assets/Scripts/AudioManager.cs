@@ -12,7 +12,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] string currentClipAlias;
     Dictionary<string, AudioClip> dictionary;
 
-    void Start(){
+    void Awake(){
         audioSource = GetComponent<AudioSource>();
         dictionary = Zip();
     }
@@ -48,10 +48,21 @@ public class AudioManager : MonoBehaviour
         return audioSource.volume;
     }
 
+    public void PlayWhen(string clipName, bool condition){
+        if(condition){
+            if(IsNotPlaying()){
+                SetVolume(1);
+                Play(clipName.ToLower());
+            }
+        }else{
+            Stop();
+        }
+    }
+
     private Dictionary<string, AudioClip> Zip(){
         var zipped = audioClipNames.Aggregate(new Dictionary<string, AudioClip>(), (dictionary, name) => {
             int index = dictionary.Count;
-            dictionary.Add(name, audioClipFiles[index]);
+            dictionary.Add(name.ToLower(), audioClipFiles[index]);
             return dictionary;
         });
         return zipped;

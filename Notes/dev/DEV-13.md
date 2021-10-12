@@ -74,3 +74,8 @@ Newly created AudioManager.cs
 Was able to refactor out some audio fuctionality in Movement.cs and PlayerDefenses. can now use it for future projects
 
 Learned how to use the C# version of reduce which is Aggregate
+
+### C# compared with Js
+Aggregate <===> Reduce
+Select <===> Map
+Where <===> Filter

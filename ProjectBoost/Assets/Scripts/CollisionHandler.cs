@@ -10,7 +10,6 @@ public class CollisionHandler : MonoBehaviour
                 NextLevel();
                 break;
             case "Friendly":
-                Debug.Log("Friendly");
                 break;
             case "Fuel":
                 Debug.Log("Fuel");

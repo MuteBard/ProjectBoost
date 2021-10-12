@@ -8,10 +8,10 @@ public class Stalk : MonoBehaviour
     [SerializeField] GameObject chased;
     [SerializeField] float moveSpeed = 50f;
     bool spooked = false;
-    ColorHexa colorhexa;
+    ColorManager colorManager;
 
     void Start(){
-        colorhexa = gameObject.GetComponent<ColorHexa>();
+        colorManager = gameObject.GetComponent<ColorManager>();
     }
     void Update()
     {
@@ -33,11 +33,11 @@ public class Stalk : MonoBehaviour
         }else if(distance <= lightRange || spooked == true){
             spooked = true;
             Retreat();
-            colorhexa.SetColor("#005CFF");
+            colorManager.SetColor("#005CFF");
             yield return new WaitForSeconds(5f);
             spooked = false;
         }else if(spooked == false){
-            colorhexa.SetDefaultColor();
+            colorManager.SetDefaultColor();
             Attack();
         }
     }

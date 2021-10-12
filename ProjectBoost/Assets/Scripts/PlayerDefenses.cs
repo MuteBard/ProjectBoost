@@ -123,7 +123,6 @@ public class PlayerDefenses : MonoBehaviour
                 Success();
                 break;
             case "Friendly":
-                Debug.Log("Friendly");
                 break;
             case "Fuel":
                 Debug.Log("Fuel");
