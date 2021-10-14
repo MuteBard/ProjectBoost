@@ -13,6 +13,8 @@
 + explosive death
 + success confetti
 
+![](../images/DEV-15-C.png)
+
 ## Scripts Created ParticleManager to handle muliple particles of a gameObject
 
     using System.Linq;
